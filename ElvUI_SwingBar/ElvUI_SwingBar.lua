@@ -87,13 +87,14 @@ local function getOptions()
 						type = "toggle",
 						order = 1,
 						name = L["Enable"],
+						disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 					},
 					position = {
 						type = "select",
 						order = 2,
 						name = L["Text Position"],
 						values = positionValues,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					xOffset = {
 						order = 3,
@@ -101,7 +102,7 @@ local function getOptions()
 						name = L["Text xOffset"],
 						desc = L["Offset position for text."],
 						min = -300, max = 300, step = 1,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					yOffset = {
 						order = 4,
@@ -109,21 +110,21 @@ local function getOptions()
 						name = L["Text yOffset"],
 						desc = L["Offset position for text."],
 						min = -300, max = 300, step = 1,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					font = {
 						type = "select", dialogControl = "LSM30_Font",
 						order = 5,
 						name = L["Font"],
 						values = AceGUIWidgetLSMlists.font,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					fontSize = {
 						order = 6,
 						name = L["Font Size"],
 						type = "range",
 						min = 6, max = 32, step = 1,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					fontOutline = {
 						order = 7,
@@ -137,7 +138,7 @@ local function getOptions()
 							["MONOCHROMEOUTLINE"] = "MONOCROMEOUTLINE",
 							["THICKOUTLINE"] = "THICKOUTLINE"
 						},
-						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
 					}
 				}
 			}
@@ -193,8 +194,10 @@ function UF:Configure_Swingbar(frame)
 
 	if(db.swingbar.enable) then
 		frame:EnableElement("Swing")
+        E:EnableMover("ElvUF_PlayerSwingBarMover")
 	elseif(not db.swingbar.enable) then
 		frame:DisableElement("Swing")
+        E:DisableMover("ElvUF_PlayerSwingBarMover")
 		swingbar:Hide()
 	end
 end
