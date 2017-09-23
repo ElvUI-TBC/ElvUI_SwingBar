@@ -50,12 +50,14 @@ local function getOptions()
 				name = L["Width"],
 				type = "range",
 				min = 50, max = 600, step = 1,
+				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			height = {
 				order = 3,
 				name = L["Height"],
 				type = "range",
-				min = 10, max = 85, step = 1
+				min = 10, max = 85, step = 1,
+				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			color = {
 				order = 4,
@@ -71,6 +73,7 @@ local function getOptions()
 					t.r, t.g, t.b = r, g, b
 					UF:CreateAndUpdateUF("player")
 				end,
+				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			textGroup = {
 				order = 300,
@@ -90,6 +93,7 @@ local function getOptions()
 						order = 2,
 						name = L["Text Position"],
 						values = positionValues,
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					xOffset = {
 						order = 3,
@@ -97,25 +101,29 @@ local function getOptions()
 						name = L["Text xOffset"],
 						desc = L["Offset position for text."],
 						min = -300, max = 300, step = 1,
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					yOffset = {
 						order = 4,
 						type = "range",
 						name = L["Text yOffset"],
 						desc = L["Offset position for text."],
-						min = -300, max = 300, step = 1
+						min = -300, max = 300, step = 1,
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					font = {
 						type = "select", dialogControl = "LSM30_Font",
 						order = 5,
 						name = L["Font"],
 						values = AceGUIWidgetLSMlists.font,
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					fontSize = {
 						order = 6,
 						name = L["Font Size"],
 						type = "range",
 						min = 6, max = 32, step = 1,
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
 					},
 					fontOutline = {
 						order = 7,
@@ -125,10 +133,11 @@ local function getOptions()
 						values = {
 							["NONE"] = L["None"],
 							["OUTLINE"] = "OUTLINE",
-							["MONOCHROME"] = (not E.isMacClient) and "MONOCHROME" or nil,
+							["MONOCHROME"] = "MONOCHROME",
 							["MONOCHROMEOUTLINE"] = "MONOCROMEOUTLINE",
 							["THICKOUTLINE"] = "THICKOUTLINE"
-						}
+						},
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable end
 					}
 				}
 			}
