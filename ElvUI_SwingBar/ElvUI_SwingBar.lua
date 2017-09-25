@@ -194,10 +194,10 @@ function UF:Configure_Swingbar(frame)
 
 	if(db.swingbar.enable) then
 		frame:EnableElement("Swing")
-        E:EnableMover("ElvUF_PlayerSwingBarMover")
+        E:EnableMover(frame:GetName() .. "SwingBarMover")
 	elseif(not db.swingbar.enable) then
 		frame:DisableElement("Swing")
-        E:DisableMover("ElvUF_PlayerSwingBarMover")
+        E:DisableMover(frame:GetName() .. "SwingBarMover")
 		swingbar:Hide()
 	end
 end
