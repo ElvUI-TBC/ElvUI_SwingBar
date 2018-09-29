@@ -1,8 +1,9 @@
 ## Interface: 20400
 ## Author: Bunny
 ## Version: 1.0
-## Title: |cffA11313E|r|cffC4C4C4lvUI|r |cffA11313S|r|cffC4C4C4wing|r |cffA11313B|r|cffC4C4C4ar|r
+## Title: |cff00b30bE|r|cffC4C4C4lvUI|r |cff00b30bS|r|cffC4C4C4wing|r |cff00b30bB|r|cffC4C4C4ar|r
 ## RequiredDeps: ElvUI
 
-oUF_Swing.lua
+Locales\Load_Locales.xml
+Libraries\oUF_Swing.lua
 ElvUI_SwingBar.lua

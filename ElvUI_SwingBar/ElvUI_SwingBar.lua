@@ -1,14 +1,16 @@
 local E, L, V, P, G = unpack(ElvUI)
-local EP = LibStub("LibElvUIPlugin-1.0")
 local SB = E:NewModule("SwingBar")
 local UF = E:GetModule("UnitFrames")
+local EP = LibStub("LibElvUIPlugin-1.0")
+local addonName = "ElvUI_SwingBar"
+
+local NONE, FONT_SIZE, COLOR = NONE, FONT_SIZE, COLOR
 
 P.unitframe.units.player.swingbar = {
 	enable = true,
 	width = 270,
 	height = 18,
-	color = {r = .31, g = .31, b = .31},
-
+	color = {r = 0.31, g = 0.31, b = 0.31},
 	text = {
 		enable = true,
 		position = "CENTER",
@@ -16,7 +18,8 @@ P.unitframe.units.player.swingbar = {
 		yOffset = 0,
 		font = "Homespun",
 		fontSize = 10,
-		fontOutline = "MONOCHROMEOUTLINE"
+		fontOutline = "MONOCHROMEOUTLINE",
+		color = {r = 1, g = 1, b = 1}
 	}
 }
 
@@ -32,51 +35,100 @@ local positionValues = {
 	BOTTOM = "BOTTOM",
 }
 
+local function ColorizeSettingName(settingName)
+	return format("|cff1784d1%s|r", settingName)
+end
+
 local function getOptions()
-	E.Options.args.unitframe.args.player.args.swing = {
-		order = 2000,
+	if not E.Options.args.elvuiPlugins then
+		E.Options.args.elvuiPlugins = {
+			order = 50,
+			type = "group",
+			name = "|cff00b30bE|r|cffC4C4C4lvUI_|r|cff00b30bP|r|cffC4C4C4lugins|r",
+			args = {
+				header = {
+					order = 0,
+					type = "header",
+					name = "|cff00b30bE|r|cffC4C4C4lvUI_|r|cff00b30bP|r|cffC4C4C4lugins|r"
+				},
+				swingBarShortcut = {
+					type = "execute",
+					name = ColorizeSettingName(L["Swing Bar"]),
+					func = function()
+						if IsAddOnLoaded("ElvUI_Config") then
+							local ACD = LibStub("AceConfigDialog-3.0-ElvUI")
+							ACD:SelectGroup("ElvUI", "elvuiPlugins", "swing")
+						end
+					end
+				}
+			}
+		}
+	elseif not E.Options.args.elvuiPlugins.args.swingBarShortcut then
+		E.Options.args.elvuiPlugins.args.swingBarShortcut = {
+			type = "execute",
+			name = ColorizeSettingName(L["Swing Bar"]),
+			func = function()
+				if IsAddOnLoaded("ElvUI_Config") then
+					local ACD = LibStub("AceConfigDialog-3.0-ElvUI")
+					ACD:SelectGroup("ElvUI", "elvuiPlugins", "swing")
+				end
+			end
+		}
+	end
+
+	E.Options.args.elvuiPlugins.args.swing = {
 		type = "group",
-		name = L["SwingBar"],
+		name = ColorizeSettingName(L["Swing Bar"]),
 		get = function(info) return E.db.unitframe.units.player.swingbar[ info[#info] ] end,
 		set = function(info, value) E.db.unitframe.units.player.swingbar[ info[#info] ] = value UF:CreateAndUpdateUF("player") end,
 		args = {
-			enable = {
-				type = "toggle",
+			header = {
 				order = 1,
-				name = L["Enable"],
+				type = "header",
+				name = L["Swing Bar"]
+			},
+			enable = {
+				order = 2,
+				type = "toggle",
+				name = L["Enable"]
+			},
+			spacer = {
+				order = 3,
+				type = "description",
+				name = " "
 			},
 			width = {
-				order = 2,
-				name = L["Width"],
+				order = 4,
 				type = "range",
+				name = L["Width"],
 				min = 50, max = 600, step = 1,
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			height = {
-				order = 3,
-				name = L["Height"],
+				order = 5,
 				type = "range",
+				name = L["Height"],
 				min = 10, max = 85, step = 1,
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			color = {
-				order = 4,
-				name = L["Color"],
+				order = 6,
 				type = "color",
+				name = COLOR,
 				get = function(info)
-					local t = E.db.unitframe.units.player.swingbar[ info[#info] ]
-					local d = P.unitframe.units.player.swingbar[ info[#info] ]
+					local t = E.db.unitframe.units.player.swingbar[info[#info]]
+					local d = P.unitframe.units.player.swingbar[info[#info]]
 					return t.r, t.g, t.b, t.a, d.r, d.g, d.b
 				end,
 				set = function(info, r, g, b)
-					local t = E.db.unitframe.units.player.swingbar[ info[#info] ]
+					local t = E.db.unitframe.units.player.swingbar[info[#info]]
 					t.r, t.g, t.b = r, g, b
 					UF:CreateAndUpdateUF("player")
 				end,
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			textGroup = {
-				order = 300,
+				order = 7,
 				type = "group",
 				name = L["Text"],
 				guiInline = true,
@@ -84,61 +136,81 @@ local function getOptions()
 				set = function(info, value) E.db.unitframe.units.player.swingbar.text[ info[#info] ] = value UF:CreateAndUpdateUF("player") end,
 				args = {
 					enable = {
-						type = "toggle",
 						order = 1,
+						type = "toggle",
 						name = L["Enable"],
 						disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 					},
-					position = {
-						type = "select",
+					spacer = {
 						order = 2,
+						type = "description",
+						name = " "
+					},
+					position = {
+						order = 3,
+						type = "select",
 						name = L["Text Position"],
 						values = positionValues,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable or not E.db.unitframe.units.player.swingbar.enable end
 					},
 					xOffset = {
-						order = 3,
+						order = 4,
 						type = "range",
 						name = L["Text xOffset"],
 						desc = L["Offset position for text."],
 						min = -300, max = 300, step = 1,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable or not E.db.unitframe.units.player.swingbar.enable end
 					},
 					yOffset = {
-						order = 4,
+						order = 5,
 						type = "range",
 						name = L["Text yOffset"],
 						desc = L["Offset position for text."],
 						min = -300, max = 300, step = 1,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable or not E.db.unitframe.units.player.swingbar.enable end
 					},
 					font = {
+						order = 6,
 						type = "select", dialogControl = "LSM30_Font",
-						order = 5,
 						name = L["Font"],
 						values = AceGUIWidgetLSMlists.font,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable or not E.db.unitframe.units.player.swingbar.enable end
 					},
 					fontSize = {
-						order = 6,
-						name = L["Font Size"],
+						order = 7,
 						type = "range",
+						name = FONT_SIZE,
 						min = 6, max = 32, step = 1,
-						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable or not E.db.unitframe.units.player.swingbar.enable end
 					},
 					fontOutline = {
-						order = 7,
+						order = 8,
+						type = "select",
 						name = L["Font Outline"],
 						desc = L["Set the font outline."],
-						type = "select",
 						values = {
-							["NONE"] = L["None"],
+							["NONE"] = NONE,
 							["OUTLINE"] = "OUTLINE",
-							["MONOCHROME"] = "MONOCHROME",
 							["MONOCHROMEOUTLINE"] = "MONOCROMEOUTLINE",
 							["THICKOUTLINE"] = "THICKOUTLINE"
 						},
-						disabled = function() return not E.db.unitframe.units.player.swingbar.enable or not E.db.unitframe.units.player.swingbar.text.enable end
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable or not E.db.unitframe.units.player.swingbar.enable end
+					},
+					color = {
+						order = 9,
+						type = "color",
+						name = L["Text Color"],
+						get = function(info)
+							local t = E.db.unitframe.units.player.swingbar.text[info[#info]]
+							local d = P.unitframe.units.player.swingbar.text[info[#info]]
+							return t.r, t.g, t.b, t.a, d.r, d.g, d.b
+						end,
+						set = function(info, r, g, b)
+							local t = E.db.unitframe.units.player.swingbar.text[info[#info]]
+							t.r, t.g, t.b = r, g, b
+							UF:CreateAndUpdateUF("player")
+						end,
+						disabled = function() return not E.db.unitframe.units.player.swingbar.text.enable or not E.db.unitframe.units.player.swingbar.enable end
 					}
 				}
 			}
@@ -150,8 +222,8 @@ function UF:Construct_Swingbar(frame)
 	local swingbar = CreateFrame("StatusBar", nil, frame)
 	UF["statusbars"][swingbar] = true
 
+	swingbar:CreateBackdrop("Default", nil, nil, self.thinBorders, true)
 	swingbar:SetClampedToScreen(true)
-	swingbar:CreateBackdrop("Default")
 
 	swingbar.Text = swingbar:CreateFontString(nil, "OVERLAY")
 
@@ -161,7 +233,7 @@ function UF:Construct_Swingbar(frame)
 	holder:Point("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -36)
 	swingbar:Point("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -E.Border, E.Border)
 
-	E:CreateMover(holder, frame:GetName() .. "SwingBarMover", "Player SwingBar", nil, -6, nil, "ALL,SOLO")
+	E:CreateMover(holder, frame:GetName() .. "SwingBarMover", L["Player SwingBar"], nil, -6, nil, "ALL,SOLO")
 
 	return swingbar
 end
@@ -170,40 +242,48 @@ function UF:Configure_Swingbar(frame)
 	local db = frame.db
 	local swingbar = frame.Swing
 
-	swingbar:Width(db.swingbar.width - (E.Border * 2))
-	swingbar:Height(db.swingbar.height)
-	swingbar.Holder:Width(db.swingbar.width)
-	swingbar.Holder:Height(db.swingbar.height + (E.PixelMode and 2 or (E.Border * 2)))
-	if(swingbar.Holder:GetScript("OnSizeChanged")) then
-		swingbar.Holder:GetScript("OnSizeChanged")(swingbar.Holder)
-	end
-
-	swingbar:SetStatusBarColor(db.swingbar.color.r, db.swingbar.color.g, db.swingbar.color.b)
-
-	if(swingbar.Text) then
-		if(db.swingbar.text.enable) then
-			swingbar.Text:Show()
-			swingbar.Text:FontTemplate(UF.LSM:Fetch("font", db.swingbar.text.font), db.swingbar.text.fontSize, db.swingbar.text.fontOutline)
-			local x, y = self:GetPositionOffset(db.swingbar.text.position)
-			swingbar.Text:ClearAllPoints()
-			swingbar.Text:Point(db.swingbar.text.position, swingbar, db.swingbar.text.position, x + db.swingbar.text.xOffset, y + db.swingbar.text.yOffset)
-		else
-			swingbar.Text:Hide()
+	if db.swingbar.enable then
+		if not frame:IsElementEnabled("Swing") then
+			frame:EnableElement("Swing")
 		end
-	end
+		swingbar:Width(db.swingbar.width - (E.Border * 2))
+		swingbar:Height(db.swingbar.height)
+		swingbar.Holder:Width(db.swingbar.width)
+		swingbar.Holder:Height(db.swingbar.height + (E.PixelMode and 2 or (E.Border * 2)))
+		if swingbar.Holder:GetScript("OnSizeChanged") then
+			swingbar.Holder:GetScript("OnSizeChanged")(swingbar.Holder)
+		end
 
-	if(db.swingbar.enable) then
-		frame:EnableElement("Swing")
-        E:EnableMover(frame:GetName() .. "SwingBarMover")
-	elseif(not db.swingbar.enable) then
+		swingbar:SetStatusBarColor(db.swingbar.color.r, db.swingbar.color.g, db.swingbar.color.b)
+
+		local color = E.db.unitframe.colors.borderColor
+		swingbar.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
+
+		color = db.swingbar.text.color
+		if swingbar.Text then
+			if db.swingbar.text.enable then
+				swingbar.Text:Show()
+				swingbar.Text:FontTemplate(UF.LSM:Fetch("font", db.swingbar.text.font), db.swingbar.text.fontSize, db.swingbar.text.fontOutline)
+				local x, y = self:GetPositionOffset(db.swingbar.text.position)
+				swingbar.Text:ClearAllPoints()
+				swingbar.Text:Point(db.swingbar.text.position, swingbar, db.swingbar.text.position, x + db.swingbar.text.xOffset, y + db.swingbar.text.yOffset)
+				swingbar.Text:SetTextColor(color.r, color.g, color.b)
+			else
+				swingbar.Text:Hide()
+			end
+		end
+
+		E:EnableMover(frame:GetName().."SwingBarMover")
+	elseif frame:IsElementEnabled("Swing") then
 		frame:DisableElement("Swing")
-        E:DisableMover(frame:GetName() .. "SwingBarMover")
+
 		swingbar:Hide()
+		E:DisableMover(frame:GetName().."SwingBarMover")
 	end
 end
 
 function SB:Initialize()
-	EP:RegisterPlugin("ElvUI_SwingBar", getOptions)
+	EP:RegisterPlugin(addonName, getOptions)
 
 	ElvUF_Player.Swing = UF:Construct_Swingbar(ElvUF_Player)
 	hooksecurefunc(UF, "Update_PlayerFrame", function(self, frame, db)
@@ -211,4 +291,8 @@ function SB:Initialize()
 	end)
 end
 
-E:RegisterModule(SB:GetName())
+local function InitializeCallback()
+	SB:Initialize()
+end
+
+E:RegisterModule(SB:GetName(), InitializeCallback)
