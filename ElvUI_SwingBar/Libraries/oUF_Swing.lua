@@ -48,7 +48,7 @@ do
 					meleeing = false
 					rangeing = false
 				end
-				
+
 				checkelapsed = 0
 			else
 				checkelapsed = checkelapsed + elapsed
@@ -96,7 +96,7 @@ do
 	end
 end
 
-local function MeleeChange(self, event, unit)
+local function MeleeChange(self, _, unit)
 	if unit ~= "player" then return end
 	if not meleeing then return end
 
@@ -176,7 +176,7 @@ local function MeleeChange(self, event, unit)
 	end
 end
 
-local function RangedChange(self, event, unit)
+local function RangedChange(self, _, unit)
 	if unit ~= "player" then return end
 	if not rangeing then return end
 
@@ -354,13 +354,13 @@ local function Enable(self, unit)
 		local normTex = element.texture or [=[Interface\TargetingFrame\UI-StatusBar]=]
 		local bgTex = element.textureBG or [=[Interface\TargetingFrame\UI-StatusBar]=]
 		local r, g, b, a, r2, g2, b2, a2
-		
+
 		if element.color then
 			r, g, b, a = unpack(element.color)
 		else
 			r, g, b, a = 1, 1, 1, 1
 		end
-		
+
 		if element.colorBG then
 			r2, g2, b2, a2 = unpack(element.colorBG) 
 		else
