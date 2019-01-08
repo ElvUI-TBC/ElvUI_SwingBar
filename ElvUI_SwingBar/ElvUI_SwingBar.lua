@@ -342,7 +342,7 @@ function SB:Initialize()
 	EP:RegisterPlugin(addonName, getOptions)
 
 	ElvUF_Player.Swing = UF:Construct_Swingbar(ElvUF_Player)
-	hooksecurefunc(UF, "Update_PlayerFrame", function(self, frame, db)
+	hooksecurefunc(UF, "Update_PlayerFrame", function(_, frame)
 		UF:Configure_Swingbar(frame)
 	end)
 end
