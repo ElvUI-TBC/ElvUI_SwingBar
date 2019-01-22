@@ -9,6 +9,7 @@ P.unitframe.units.player.swingbar = {
 	width = 270,
 	height = 18,
 	color = {r = 0.31, g = 0.31, b = 0.31},
+	backdropColor = {r = 0.31, g = 0.31, b = 0.31},
 	text = {
 		enable = true,
 		position = "CENTER",
@@ -109,8 +110,13 @@ local function getOptions()
 				min = 5, max = 85, step = 1,
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
-			color = {
+			spacer2 = {
 				order = 6,
+				type = "description",
+				name = " "
+			},
+			color = {
+				order = 7,
 				type = "color",
 				name = L["Color"],
 				get = function(info)
@@ -125,8 +131,24 @@ local function getOptions()
 				end,
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
+			backdropColor = {
+				order = 8,
+				type = "color",
+				name = L["Backdrop Color"],
+				get = function(info)
+					local t = E.db.unitframe.units.player.swingbar[info[#info]]
+					local d = P.unitframe.units.player.swingbar[info[#info]]
+					return t.r, t.g, t.b, t.a, d.r, d.g, d.b
+				end,
+				set = function(info, r, g, b)
+					local t = E.db.unitframe.units.player.swingbar[info[#info]]
+					t.r, t.g, t.b = r, g, b
+					UF:CreateAndUpdateUF("player")
+				end,
+				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
+			},
 			textGroup = {
-				order = 7,
+				order = 9,
 				type = "group",
 				name = L["Text"],
 				guiInline = true,
@@ -279,6 +301,7 @@ function UF:Configure_Swingbar(frame)
 		swingbar.Mainhand:SetStatusBarColor(color.r, color.g, color.b)
 		swingbar.Offhand:SetStatusBarColor(color.r, color.g, color.b)
 
+		color = db.backdropColor
 		swingbar.Twohand.backdrop:SetBackdropColor(color.r * 0.25, color.g * 0.25, color.b * 0.25)
 		swingbar.Mainhand.backdrop:SetBackdropColor(color.r * 0.25, color.g * 0.25, color.b * 0.25)
 		swingbar.Offhand.backdrop:SetBackdropColor(color.r * 0.25, color.g * 0.25, color.b * 0.25)
