@@ -86,37 +86,45 @@ local function getOptions()
 				type = "header",
 				name = L["Swing Bar"]
 			},
-			enable = {
+			restore = {
 				order = 2,
-				type = "toggle",
-				name = L["Enable"]
+				type = "execute",
+				name = L["Restore Defaults"],
+				buttonElvUI = true,
+				func = function() E:CopyTable(E.db.unitframe.units.player.swingbar, P.unitframe.units.player.swingbar) E:ResetMovers(L["Player SwingBar"]) UF:CreateAndUpdateUF("player") end,
+				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			spacer = {
 				order = 3,
 				type = "description",
 				name = " "
 			},
-			width = {
+			enable = {
 				order = 4,
+				type = "toggle",
+				name = L["Enable"]
+			},
+			width = {
+				order = 5,
 				type = "range",
 				name = L["Width"],
 				min = 50, max = 600, step = 1,
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			height = {
-				order = 5,
+				order = 6,
 				type = "range",
 				name = L["Height"],
 				min = 5, max = 85, step = 1,
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			spacer2 = {
-				order = 6,
+				order = 7,
 				type = "description",
 				name = " "
 			},
 			color = {
-				order = 7,
+				order = 8,
 				type = "color",
 				name = L["Color"],
 				get = function(info)
@@ -132,7 +140,7 @@ local function getOptions()
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			backdropColor = {
-				order = 8,
+				order = 9,
 				type = "color",
 				name = L["Backdrop Color"],
 				get = function(info)
@@ -148,7 +156,7 @@ local function getOptions()
 				disabled = function() return not E.db.unitframe.units.player.swingbar.enable end
 			},
 			textGroup = {
-				order = 9,
+				order = 10,
 				type = "group",
 				name = L["Text"],
 				guiInline = true,
