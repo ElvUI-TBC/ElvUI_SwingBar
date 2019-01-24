@@ -229,7 +229,7 @@ local function Ranged(self, _, unit, spellName)
 	element.Offhand:SetScript("OnUpdate", nil)
 end
 
-local function Melee(self, _, _, event, GUID)
+local function Melee(self, _, _, event, GUID, _, _, _, _, _, _, spellName)
 	if UnitGUID("player") ~= GUID then return end
 	if not find(event, "SWING") and not find(event, "SPELL_CAST_SUCCESS") then return end
 	if find(event, "SPELL_CAST_SUCCESS") then
